@@ -22,7 +22,6 @@ def first_plot():
     fig = px.bar(df, x=['aggressive', 'non_aggressive'], y='win',
                  title='Comparison of game victories when playing aggressively')
     fig.show()
-    print('halo')
 
 
 def second_plot():
