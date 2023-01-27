@@ -1,7 +1,7 @@
 import pandas as pd
 
 from data_manipulation import force_type_in_hist_df, fill_stat_values_in_hist_df
-from utils import add_historic_data_of_last_n_matches_as_features
+from utils import add_historic_data_of_last_n_matches_as_features, MATCH_STATS_COLUMNS
 
 INPUT_CSV_NAME = './dataset/data.csv'
 OUTPUT_CSV_NAME = './dataset/streak-data.csv'
@@ -37,6 +37,7 @@ def data_manipulation(df: pd.DataFrame):
     print('===> Phase 2: DATA MANIPULATION ')
     df['time'] = pd.to_datetime(df['time'], format="%H:%M")
     df['date'] = pd.to_datetime(df['date'], infer_datetime_format=True)
+    df = df.drop(columns=MATCH_STATS_COLUMNS)
     df = add_historic_data_of_last_n_matches_as_features(df)
     df = convert_wide_to_long(df)
     df = fill_stat_values_in_hist_df(df)
