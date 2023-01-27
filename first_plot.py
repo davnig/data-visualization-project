@@ -21,6 +21,14 @@ def first_plot():
     df = generate_first_plot_data()
     fig = go.Figure(
         data=[go.Pie(labels=df['aggressiveness'], values=df['wins'], marker=dict(colors=['lightgrey', '#e23d3d']))])
+    # fig.show()
+    # fig.write_image('./plot/1_pie.png')
+    fig = go.Figure(data=[
+        go.Bar(name='Aggressive', x=[15], y=[''], orientation='h'),
+        go.Bar(name='Non-aggressive', x=[15], y=['aggressiveness'], orientation='h')
+    ])
+    fig.update_layout(barmode='stack')
+    fig.update_yaxes(range=[0, 30])
     fig.show()
 
 
