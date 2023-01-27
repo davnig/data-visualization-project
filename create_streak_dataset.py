@@ -3,8 +3,8 @@ import pandas as pd
 from data_manipulation import force_type_in_hist_df, fill_stat_values_in_hist_df
 from utils import add_historic_data_of_last_n_matches_as_features
 
-INPUT_CSV_NAME = '../dataset/data.csv'
-OUTPUT_CSV_NAME = '../dataset/streak-data.csv'
+INPUT_CSV_NAME = './dataset/data.csv'
+OUTPUT_CSV_NAME = './dataset/streak-data.csv'
 
 
 def data_manipulation(df: pd.DataFrame):
