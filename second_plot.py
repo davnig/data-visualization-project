@@ -1,4 +1,5 @@
 import pandas as pd
+import plotly.express as px
 
 
 def encode_match_result(team, home_team, away_team, result):
@@ -20,6 +21,8 @@ def generate_second_plot_data():
 
         def count_team_winning_streaks():
             def save_last_streaks():
+                if '{}-streaks'.format(streak_count) not in streak_data:
+                    return
                 streak_data['{}-streaks'.format(streak_count)] += 1
                 streak_data['{}-streak-{}'.format(streak_count, value)] += 1
                 for below_steak in range(streak_count - 1, 0, -1):
@@ -51,9 +54,9 @@ def generate_second_plot_data():
                 count_team_winning_streaks()
         return streak_data
 
-    def remove_unfounded_streaks():
-        for i in range(1, 21):
-            if winning_streaks['{}-streaks'.format(i)] == 0:
+    def remove_unwanted_streaks(max_streak=20):
+        for i in range(1, int(len(winning_streaks) / 4) + 1):
+            if i > max_streak:
                 winning_streaks.pop('{}-streaks'.format(i))
                 winning_streaks.pop('{}-streak-win'.format(i))
                 winning_streaks.pop('{}-streak-draw'.format(i))
@@ -72,17 +75,29 @@ def generate_second_plot_data():
                 '{}-streaks'.format(i)]
         return normalized
 
+    def convert_streak_dict_to_df():
+        streak_df = pd.DataFrame()
+        streak_df['streak'] = range(1, int(len(winning_streaks) / 4) + 1)
+        streak_df['win'] = [normalized_streak_count[x] for x in normalized_streak_count if x.endswith('win')]
+        streak_df['draw'] = [normalized_streak_count[x] for x in normalized_streak_count if x.endswith('draw')]
+        streak_df['lose'] = [normalized_streak_count[x] for x in normalized_streak_count if x.endswith('lose')]
+        streak_df['total'] = [winning_streaks[x] for x in winning_streaks if x.endswith('streaks')]
+        return streak_df
+
     df = pd.read_csv('dataset/data.csv', sep=',')
     df = df.filter(regex='season|round|home_team|away_team|result', axis=1)
     winning_streaks = count_all_winning_streaks()
-    winning_streaks = remove_unfounded_streaks()
+    winning_streaks = remove_unwanted_streaks(max_streak=7)
     normalized_streak_count = normalize_winning_streak()
-    return normalized_streak_count
+    normalized_streak_df = convert_streak_dict_to_df()
+    return normalized_streak_df
 
 
 def second_plot():
-    streak_data = generate_second_plot_data()
-    print(streak_data)
+    winning_streaks_df = generate_second_plot_data()
+    fig = px.bar(winning_streaks_df, x='streak', y=['win', 'draw', 'lose'], title='test')
+    fig.update_layout(barmode='group')
+    fig.show()
     pass
 
 
