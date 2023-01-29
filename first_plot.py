@@ -14,11 +14,11 @@ def generate_first_plot_data():
     aggressive_wins = df.query("num_of_fouls > {}".format(mean)).sum()
     df = pd.DataFrame(
         data={'aggressiveness': ['non-aggressive', 'aggressive'], 'wins': [non_aggressive_wins[0], aggressive_wins[0]]})
-    return df
+    return df, mean
 
 
 def first_plot():
-    df = generate_first_plot_data()
+    df, mean = generate_first_plot_data()
     fig = go.Figure(
         data=[go.Pie(labels=df['aggressiveness'], values=df['wins'], marker=dict(colors=['lightgrey', '#e23d3d']))])
     # fig.show()
