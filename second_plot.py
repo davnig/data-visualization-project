@@ -51,15 +51,38 @@ def generate_second_plot_data():
                 count_team_winning_streaks()
         return streak_data
 
+    def remove_unfounded_streaks():
+        for i in range(1, 21):
+            if winning_streaks['{}-streaks'.format(i)] == 0:
+                winning_streaks.pop('{}-streaks'.format(i))
+                winning_streaks.pop('{}-streak-win'.format(i))
+                winning_streaks.pop('{}-streak-draw'.format(i))
+                winning_streaks.pop('{}-streak-lose'.format(i))
+        return winning_streaks
+
+    def normalize_winning_streak():
+        normalized = {}
+        num_of_streaks = int(len(winning_streaks) / 4)
+        for i in range(1, num_of_streaks + 1):
+            normalized['{}-win'.format(i)] = winning_streaks['{}-streak-win'.format(i)] / winning_streaks[
+                '{}-streaks'.format(i)]
+            normalized['{}-draw'.format(i)] = winning_streaks['{}-streak-draw'.format(i)] / winning_streaks[
+                '{}-streaks'.format(i)]
+            normalized['{}-lose'.format(i)] = winning_streaks['{}-streak-lose'.format(i)] / winning_streaks[
+                '{}-streaks'.format(i)]
+        return normalized
+
     df = pd.read_csv('dataset/data.csv', sep=',')
     df = df.filter(regex='season|round|home_team|away_team|result', axis=1)
     winning_streaks = count_all_winning_streaks()
-    return winning_streaks
+    winning_streaks = remove_unfounded_streaks()
+    normalized_streak_count = normalize_winning_streak()
+    return normalized_streak_count
 
 
 def second_plot():
-    streak_count = generate_second_plot_data()
-    print(streak_count)
+    streak_data = generate_second_plot_data()
+    print(streak_data)
     pass
 
 
