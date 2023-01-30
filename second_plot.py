@@ -113,12 +113,11 @@ def second_plot():
         go.Bar(name='streak count', x=winning_streaks_df.streak, y=winning_streaks_df.total_norm, offsetgroup=0,
                text=winning_streaks_df['total'], textposition='outside', marker=dict(color='#69c38f')),
         go.Bar(name='win', x=winning_streaks_df.streak, y=winning_streaks_df.win, offsetgroup=1,
-               marker=dict(color='#006d78'),
-               text=win_percentages, textposition='inside'),
+               text=win_percentages, textposition='inside', marker=dict(color='#006d78')),
         go.Bar(name='draw', x=winning_streaks_df.streak, y=winning_streaks_df.draw, offsetgroup=1,
-               base=winning_streaks_df.win, marker=dict(color='#51acb8')),
+               base=winning_streaks_df.win, marker=dict(color='#929399')),
         go.Bar(name='lose', x=winning_streaks_df.streak, y=winning_streaks_df.lose, offsetgroup=1,
-               base=winning_streaks_df.win + winning_streaks_df.draw, marker=dict(color='#7cd6e2'))
+               base=winning_streaks_df.win + winning_streaks_df.draw, marker=dict(color='#cfd0d7'))
     ], layout=layout)
     fig.update_xaxes(showline=True, linecolor='black', title_text='Winning streaks', title_font={'size': 20})
     fig.update_yaxes(showticklabels=False)
