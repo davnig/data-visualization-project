@@ -1,5 +1,7 @@
 import pandas as pd
-import plotly.express as px
+import plotly.graph_objects as go
+
+SHOW_IMAGE = True
 
 
 def encode_match_result(team, home_team, away_team, result):
@@ -96,15 +98,39 @@ def generate_second_plot_data():
     streaks = remove_unwanted_streaks(max_streak=7)
     normalized_streak_count = normalize_winning_streak()
     normalized_streak_df = convert_streak_dict_to_df()
+    total_ref = normalized_streak_df.iloc[0, 4]
+    normalized_streak_df['total_norm'] = normalized_streak_df['total'] / total_ref
     return normalized_streak_df
 
 
 def second_plot():
     winning_streaks_df = generate_second_plot_data()
-    fig = px.bar(winning_streaks_df, x='streak', y=['win', 'draw', 'lose'], title='test')
-    fig.update_layout(barmode='group')
-    fig.show()
-    pass
+    win_percentages = ['37%', '35%', '40%', '45%', '51%', '57%', '74%', '76%']
+    layout = go.Layout(
+        plot_bgcolor='rgba(0,0,0,0)'
+    )
+    fig = go.Figure(data=[
+        go.Bar(name='streak count', x=winning_streaks_df.streak, y=winning_streaks_df.total_norm, offsetgroup=0,
+               text=winning_streaks_df['total'], textposition='outside', marker=dict(color='#69c38f')),
+        go.Bar(name='win', x=winning_streaks_df.streak, y=winning_streaks_df.win, offsetgroup=1,
+               marker=dict(color='#006d78'),
+               text=win_percentages, textposition='inside'),
+        go.Bar(name='draw', x=winning_streaks_df.streak, y=winning_streaks_df.draw, offsetgroup=1,
+               base=winning_streaks_df.win, marker=dict(color='#51acb8')),
+        go.Bar(name='lose', x=winning_streaks_df.streak, y=winning_streaks_df.lose, offsetgroup=1,
+               base=winning_streaks_df.win + winning_streaks_df.draw, marker=dict(color='#7cd6e2'))
+    ], layout=layout)
+    fig.update_xaxes(showline=True, linecolor='black', title_text='Winning streaks', title_font={'size': 20})
+    fig.update_yaxes(showticklabels=False)
+    fig.update_layout(
+        font=dict(
+            size=24
+        )
+    )
+    fig.update_layout(legend=dict(font=dict(size=20)))
+    if SHOW_IMAGE:
+        fig.show()
+    # fig.write_image(file='./plot/plot2.png', width=2000, height=1000, scale=2)
 
 
 if __name__ == '__main__':
