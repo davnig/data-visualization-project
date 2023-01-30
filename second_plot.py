@@ -98,14 +98,15 @@ def generate_second_plot_data():
     streaks = remove_unwanted_streaks(max_streak=7)
     normalized_streak_count = normalize_winning_streak()
     normalized_streak_df = convert_streak_dict_to_df()
-    total_ref = normalized_streak_df.iloc[0, 4]
+    total_ref = normalized_streak_df.iloc[1, 4]
     normalized_streak_df['total_norm'] = normalized_streak_df['total'] / total_ref
     return normalized_streak_df
 
 
 def second_plot():
     winning_streaks_df = generate_second_plot_data()
-    win_percentages = ['37%', '35%', '40%', '45%', '51%', '57%', '74%', '76%']
+    winning_streaks_df = winning_streaks_df.drop(index=0)
+    win_percentages = ['35%', '40%', '45%', '51%', '57%', '74%', '76%']
     layout = go.Layout(
         plot_bgcolor='rgba(0,0,0,0)'
     )
