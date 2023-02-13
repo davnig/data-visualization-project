@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 
@@ -27,10 +28,13 @@ def generate_first_plot_revised_data():
     df['aggressive'] = False
     df.loc[df['num_of_fouls'] > mean, 'aggressive'] = True
     df = df.drop(columns=['result', 'team', 'num_of_fouls'])
-    aggressive_games_count = df['aggressive'].value_counts()
-    aggressive_victories_count = df[df['aggressive']]['victory'].value_counts()
-    non_aggressive_victories_count = df[df['aggressive'] == False]['victory'].value_counts()
-    return aggressive_games_count, aggressive_victories_count, non_aggressive_victories_count
+    aggressive_games_count = df['aggressive'].value_counts().to_numpy()
+    aggressive_wins_count = df[df['aggressive']]['victory'].value_counts().to_numpy().astype(np.float)
+    non_aggressive_wins_count = df[df['aggressive'] == False]['victory'].value_counts().to_numpy().astype(np.float)
+    for i in range(0, 2):
+        aggressive_wins_count[i] = aggressive_wins_count[i] / aggressive_games_count[1]
+        non_aggressive_wins_count[i] = non_aggressive_wins_count[i] / aggressive_games_count[0]
+    return aggressive_games_count, aggressive_wins_count, non_aggressive_wins_count
 
 
 def first_plot():
@@ -50,6 +54,40 @@ def first_plot():
 
 def first_plot_revised():
     aggressive_games_count, aggressive_wins_count, non_aggressive_wins_count = generate_first_plot_revised_data()
+
+    x_labels = ['Aggressive', 'Non-aggressive']
+    widths = [aggressive_games_count[1], aggressive_games_count[0]]
+    data = {
+        "Wins": [aggressive_wins_count[1], non_aggressive_wins_count[1]],
+        "Non-wins": [aggressive_wins_count[0], non_aggressive_wins_count[0]]
+    }
+
+    fig = go.Figure()
+    for key in data:
+        fig.add_trace(go.Bar(
+            name=key,
+            y=data[key],
+            x=np.cumsum(widths) - widths,
+            width=widths,
+            offset=0,
+            textposition="inside",
+            textangle=0,
+            textfont_color="white",
+        ))
+
+    # fig.update_xaxes(
+    #    ticktext=["%s<br>%d" % (label, width) for label, width in zip(x_labels, widths)]
+    # )
+
+    fig.update_xaxes(range=[0, widths[0] + widths[1]])
+    fig.update_yaxes(range=[0, 1])
+
+    fig.update_layout(
+        title_text="Marimekko Chart",
+        barmode="stack",
+        uniformtext=dict(mode="hide", minsize=10),
+    )
+    fig.show()
     pass
 
 
