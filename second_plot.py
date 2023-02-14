@@ -110,7 +110,7 @@ def second_plot():
     layout = go.Layout(
         plot_bgcolor='rgba(0,0,0,0)'
     )
-    fig = go.Figure(data=[
+    data = [
         go.Bar(name='streak count', x=winning_streaks_df.streak, y=winning_streaks_df.total_norm, offsetgroup=0,
                text=winning_streaks_df['total'], textposition='outside', marker=dict(color='#69c38f')),
         go.Bar(name='win', x=winning_streaks_df.streak, y=winning_streaks_df.win, offsetgroup=1,
@@ -119,7 +119,8 @@ def second_plot():
                base=winning_streaks_df.win, marker=dict(color='#929399')),
         go.Bar(name='lose', x=winning_streaks_df.streak, y=winning_streaks_df.lose, offsetgroup=1,
                base=winning_streaks_df.win + winning_streaks_df.draw, marker=dict(color='#cfd0d7'))
-    ], layout=layout)
+    ]
+    fig = go.Figure(data=data, layout=layout)
     fig.update_xaxes(showline=True, linecolor='black', title_text='Winning streaks', title_font={'size': 20})
     fig.update_yaxes(showticklabels=False)
     fig.update_layout(

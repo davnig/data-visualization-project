@@ -1,6 +1,9 @@
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
+import plotly.io as pio
+
+pio.kaleido.scope.default_scale = 3
 
 
 def generate_first_plot_data():
@@ -29,8 +32,8 @@ def generate_first_plot_revised_data():
     df.loc[df['num_of_fouls'] > mean, 'aggressive'] = True
     df = df.drop(columns=['result', 'team', 'num_of_fouls'])
     aggressive_games_count = df['aggressive'].value_counts().to_numpy()
-    aggressive_wins_count = df[df['aggressive']]['victory'].value_counts().to_numpy().astype(np.float)
-    non_aggressive_wins_count = df[df['aggressive'] == False]['victory'].value_counts().to_numpy().astype(np.float)
+    aggressive_wins_count = df[df['aggressive']]['victory'].value_counts().to_numpy().astype(float)
+    non_aggressive_wins_count = df[df['aggressive'] == False]['victory'].value_counts().to_numpy().astype(float)
     for i in range(0, 2):
         aggressive_wins_count[i] = aggressive_wins_count[i] / aggressive_games_count[1]
         non_aggressive_wins_count[i] = non_aggressive_wins_count[i] / aggressive_games_count[0]
@@ -54,40 +57,38 @@ def first_plot():
 
 def first_plot_revised():
     aggressive_games_count, aggressive_wins_count, non_aggressive_wins_count = generate_first_plot_revised_data()
-
     x_labels = ['Aggressive', 'Non-aggressive']
-    widths = [aggressive_games_count[1], aggressive_games_count[0]]
+    widths = np.array([aggressive_games_count[1], aggressive_games_count[0]])
     data = {
-        "Wins": [aggressive_wins_count[1], non_aggressive_wins_count[1]],
-        "Non-wins": [aggressive_wins_count[0], non_aggressive_wins_count[0]]
+        "Wins": [aggressive_wins_count[1] * 100, non_aggressive_wins_count[1] * 100],
+        "Non-wins": [aggressive_wins_count[0] * 100, non_aggressive_wins_count[0] * 100]
     }
-
-    fig = go.Figure()
-    for key in data:
-        fig.add_trace(go.Bar(
-            name=key,
-            y=data[key],
-            x=np.cumsum(widths) - widths,
-            width=widths,
-            offset=0,
-            textposition="inside",
-            textangle=0,
-            textfont_color="white",
-        ))
-
-    # fig.update_xaxes(
-    #    ticktext=["%s<br>%d" % (label, width) for label, width in zip(x_labels, widths)]
-    # )
-
-    fig.update_xaxes(range=[0, widths[0] + widths[1]])
-    fig.update_yaxes(range=[0, 1])
-
-    fig.update_layout(
-        title_text="Marimekko Chart",
-        barmode="stack",
-        uniformtext=dict(mode="hide", minsize=10),
+    x = np.cumsum(widths) - widths
+    data = [
+        go.Bar(name='Wins', y=data['Wins'], x=x, customdata=np.round(data['Wins'], 0),
+               texttemplate="%{customdata}%<br>win rate", width=widths, offset=0, textposition="inside",
+               textfont_color="white",
+               marker=dict(color=['#cf443f', '#919191'])),
+        go.Bar(name='Non-wins', y=data['Non-wins'], x=x, width=widths, offset=0, textposition="inside",
+               textfont_color="white", marker=dict(color=['#ed8380', '#d1cfcf']))
+    ]
+    layout = go.Layout(
+        barmode='stack',
+        showlegend=False,
+        font=dict(
+            size=22
+        )
     )
-    fig.show()
+    fig = go.Figure(data=data, layout=layout)
+    fig.update_xaxes(
+        range=[0, widths[0] + widths[1]],
+        showline=True, linecolor='black',
+        tickvals=np.cumsum(widths) - widths / 2,
+        ticktext=["%s<br>%d" % (length, width) for length, width in zip(x_labels, widths)]
+    )
+    fig.update_yaxes(range=[0, 100], showticklabels=False)
+    # fig.show()
+    fig.write_image('./plot/1_mekko.png')
     pass
 
 
