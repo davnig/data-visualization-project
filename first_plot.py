@@ -5,7 +5,7 @@ import plotly.graph_objects as go
 SHOW_IMAGE = False
 
 
-def generate_first_plot_data():
+def fetch_pie_chart_data():
     df = pd.read_csv('dataset/data.csv', sep=',')
     df = df[['home_fouls', 'away_fouls', 'result']]
     df = pd.melt(df, id_vars='result', value_vars=['home_fouls', 'away_fouls'])
@@ -20,7 +20,7 @@ def generate_first_plot_data():
     return df, mean
 
 
-def generate_first_plot_revised_data():
+def fetch_marimekko_chart_data():
     df = pd.read_csv('dataset/data.csv', sep=',')
     df = df[['home_fouls', 'away_fouls', 'result']]
     df = pd.melt(df, id_vars='result', value_vars=['home_fouls', 'away_fouls'])
@@ -39,8 +39,8 @@ def generate_first_plot_revised_data():
     return aggressive_games_count, aggressive_wins_count, non_aggressive_wins_count
 
 
-def first_plot():
-    df, mean = generate_first_plot_data()
+def create_pie_chart():
+    df, mean = fetch_pie_chart_data()
     fig = go.Figure(
         data=[go.Pie(labels=df['aggressiveness'], values=df['wins'], marker=dict(colors=['lightgrey', '#e23d3d']))])
     # fig.show()
@@ -54,8 +54,8 @@ def first_plot():
     fig.show()
 
 
-def first_plot_revised():
-    aggressive_games_count, aggressive_wins_count, non_aggressive_wins_count = generate_first_plot_revised_data()
+def create_marimekko_chart():
+    aggressive_games_count, aggressive_wins_count, non_aggressive_wins_count = fetch_marimekko_chart_data()
     x_labels = ['Aggressive', 'Non-aggressive']
     widths = np.array([aggressive_games_count[1], aggressive_games_count[0]])
     data = {
@@ -93,4 +93,4 @@ def first_plot_revised():
 
 
 if __name__ == '__main__':
-    first_plot_revised()
+    create_marimekko_chart()

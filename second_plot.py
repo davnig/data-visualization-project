@@ -12,7 +12,7 @@ def encode_match_result(team, home_team, away_team, result):
     return 'lose'
 
 
-def generate_second_plot_data():
+def fetch_bar_chart_data():
     def count_all_streaks():
         def init_streak_data():
             for i in range(0, 21):
@@ -103,8 +103,8 @@ def generate_second_plot_data():
     return normalized_streak_df
 
 
-def second_plot():
-    winning_streaks_df = generate_second_plot_data()
+def create_bar_chart():
+    winning_streaks_df = fetch_bar_chart_data()
     winning_streaks_df = winning_streaks_df.drop(index=0)
     win_percentages = ['35%', '40%', '45%', '51%', '57%', '74%', '76%']
     layout = go.Layout(
@@ -135,4 +135,4 @@ def second_plot():
 
 
 if __name__ == '__main__':
-    second_plot()
+    create_bar_chart()
