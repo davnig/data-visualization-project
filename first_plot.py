@@ -1,9 +1,8 @@
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
-import plotly.io as pio
 
-pio.kaleido.scope.default_scale = 3
+SHOW_IMAGE = False
 
 
 def generate_first_plot_data():
@@ -87,8 +86,9 @@ def first_plot_revised():
         ticktext=["%s<br>%d" % (length, width) for length, width in zip(x_labels, widths)]
     )
     fig.update_yaxes(range=[0, 100], showticklabels=False)
-    # fig.show()
-    fig.write_image('./plot/1_mekko.png')
+    if SHOW_IMAGE:
+        fig.show()
+    fig.write_image(file='./plot/1_mekko.png', scale=3)
     pass
 
 

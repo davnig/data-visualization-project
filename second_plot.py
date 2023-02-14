@@ -1,7 +1,7 @@
 import pandas as pd
 import plotly.graph_objects as go
 
-SHOW_IMAGE = True
+SHOW_IMAGE = False
 
 
 def encode_match_result(team, home_team, away_team, result):
@@ -111,7 +111,7 @@ def second_plot():
         plot_bgcolor='rgba(0,0,0,0)'
     )
     data = [
-        go.Bar(name='streak count', x=winning_streaks_df.streak, y=winning_streaks_df.total_norm, offsetgroup=0,
+        go.Bar(name='instances', x=winning_streaks_df.streak, y=winning_streaks_df.total_norm, offsetgroup=0,
                text=winning_streaks_df['total'], textposition='outside', marker=dict(color='#69c38f')),
         go.Bar(name='win', x=winning_streaks_df.streak, y=winning_streaks_df.win, offsetgroup=1,
                text=win_percentages, textposition='inside', marker=dict(color='#006d78')),
@@ -131,7 +131,7 @@ def second_plot():
     fig.update_layout(legend=dict(font=dict(size=20)))
     if SHOW_IMAGE:
         fig.show()
-    # fig.write_image(file='./plot/plot2.png', width=2000, height=1000, scale=2)
+    fig.write_image(file='./plot/2_bar.png', width=2000, height=1000, scale=2)
 
 
 if __name__ == '__main__':
