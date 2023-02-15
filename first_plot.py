@@ -28,7 +28,7 @@ def fetch_marimekko_chart_data():
     df['victory'] = df.apply(lambda x: x.result in x.team, axis=1)
     mean = round(df['num_of_fouls'].mean())
     df['aggressive'] = False
-    df.loc[df['num_of_fouls'] > mean, 'aggressive'] = True
+    df.loc[df['num_of_fouls'] >= mean, 'aggressive'] = True
     df = df.drop(columns=['result', 'team', 'num_of_fouls'])
     aggressive_games_count = df['aggressive'].value_counts().to_numpy()
     aggressive_wins_count = df[df['aggressive']]['victory'].value_counts().to_numpy().astype(float)
@@ -86,9 +86,7 @@ def create_marimekko_chart():
     if SHOW_IMAGE:
         fig.show()
     fig.write_image(file='./plot/1_mekko.png', scale=3)
-    pass
 
 
 if __name__ == '__main__':
-    create_pie_chart()
     create_marimekko_chart()
