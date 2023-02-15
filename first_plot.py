@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 
-SHOW_IMAGE = False
+SHOW_IMAGE = True
 
 
 def fetch_pie_chart_data():
@@ -13,10 +13,10 @@ def fetch_pie_chart_data():
     df = df[df.apply(lambda x: x.result in x.team, axis=1)]
     df = df.drop(columns=['result', 'team'])
     mean = round(df['num_of_fouls'].mean())
-    non_aggressive_wins = df.query("num_of_fouls <= {}".format(mean)).sum()
-    aggressive_wins = df.query("num_of_fouls > {}".format(mean)).sum()
+    non_aggressive_wins = len(df.query("num_of_fouls <= {}".format(mean)))
+    aggressive_wins = len(df.query("num_of_fouls > {}".format(mean)))
     df = pd.DataFrame(
-        data={'aggressiveness': ['non-aggressive', 'aggressive'], 'wins': [non_aggressive_wins[0], aggressive_wins[0]]})
+        data={'aggressiveness': ['non-aggressive', 'aggressive'], 'wins': [non_aggressive_wins, aggressive_wins]})
     return df, mean
 
 
@@ -43,15 +43,12 @@ def create_pie_chart():
     df, mean = fetch_pie_chart_data()
     fig = go.Figure(
         data=[go.Pie(labels=df['aggressiveness'], values=df['wins'], marker=dict(colors=['lightgrey', '#e23d3d']))])
-    # fig.show()
-    # fig.write_image('./plot/1_pie.png')
-    fig = go.Figure(data=[
-        go.Bar(name='Aggressive', x=[15], y=[''], orientation='h'),
-        go.Bar(name='Non-aggressive', x=[15], y=['aggressiveness'], orientation='h')
-    ])
     fig.update_layout(barmode='stack')
     fig.update_yaxes(range=[0, 30])
-    fig.show()
+    if SHOW_IMAGE:
+        fig.show()
+    fig.write_image('./plot/1_pie.png')
+    pass
 
 
 def create_marimekko_chart():
@@ -93,4 +90,5 @@ def create_marimekko_chart():
 
 
 if __name__ == '__main__':
+    create_pie_chart()
     create_marimekko_chart()
