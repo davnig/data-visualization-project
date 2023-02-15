@@ -5,21 +5,6 @@ import plotly.graph_objects as go
 SHOW_IMAGE = True
 
 
-def fetch_pie_chart_data():
-    df = pd.read_csv('dataset/data.csv', sep=',')
-    df = df[['home_fouls', 'away_fouls', 'result']]
-    df = pd.melt(df, id_vars='result', value_vars=['home_fouls', 'away_fouls'])
-    df = df.rename(columns={'variable': 'team', 'value': 'num_of_fouls'})
-    df = df[df.apply(lambda x: x.result in x.team, axis=1)]
-    df = df.drop(columns=['result', 'team'])
-    mean = round(df['num_of_fouls'].mean())
-    non_aggressive_wins = len(df.query("num_of_fouls <= {}".format(mean)))
-    aggressive_wins = len(df.query("num_of_fouls > {}".format(mean)))
-    df = pd.DataFrame(
-        data={'aggressiveness': ['non-aggressive', 'aggressive'], 'wins': [non_aggressive_wins, aggressive_wins]})
-    return df, mean
-
-
 def fetch_marimekko_chart_data():
     df = pd.read_csv('dataset/data.csv', sep=',')
     df = df[['home_fouls', 'away_fouls', 'result']]
@@ -37,18 +22,6 @@ def fetch_marimekko_chart_data():
         aggressive_wins_count[i] = aggressive_wins_count[i] / aggressive_games_count[1]
         non_aggressive_wins_count[i] = non_aggressive_wins_count[i] / aggressive_games_count[0]
     return aggressive_games_count, aggressive_wins_count, non_aggressive_wins_count
-
-
-def create_pie_chart():
-    df, mean = fetch_pie_chart_data()
-    fig = go.Figure(
-        data=[go.Pie(labels=df['aggressiveness'], values=df['wins'], marker=dict(colors=['lightgrey', '#e23d3d']))])
-    fig.update_layout(barmode='stack')
-    fig.update_yaxes(range=[0, 30])
-    if SHOW_IMAGE:
-        fig.show()
-    fig.write_image('./plot/1_pie.png')
-    pass
 
 
 def create_marimekko_chart():
